@@ -177,7 +177,7 @@ class MCTS:
 				game.PrintTablesScores(CurrentState)
 
 		Result = game.GetResult(CurrentState)
-		return Result
+		return Result				# 返回值是points?
 
 	#-----------------------------------------------------------------------#
 	# Description:
