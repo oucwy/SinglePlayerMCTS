@@ -11,12 +11,17 @@
 # https://dke.maastrichtuniversity.nl/m.winands/documents/CGSameGame.pdf
 #
 #------------------------------------------------------------------------#
+# Modify by markwy (Jun 5, 2022)
+# 
+#------------------------------------------------------------------------#
 
+# import sys
+# sys.path.append("Examples")
 import Node as nd
 import numpy as np
 import os
 # Import your game implementation here.
-import BinPackingGame as game
+from Examples import BinPackingGame as game
 
 #------------------------------------------------------------------------#
 # Class for Single Player Monte Carlo Tree Search implementation.
@@ -53,7 +58,7 @@ class MCTS:
 			#SelectedChild.visits += 1.0
 
 		if(self.verbose):
-			print "\nSelected: ", game.GetStateRepresentation(SelectedChild.state)
+			print("\nSelected: ", game.GetStateRepresentation(SelectedChild.state))
 
 		return SelectedChild
 
@@ -72,7 +77,7 @@ class MCTS:
 				continue
 			else:
 				if(self.verbose):
-					print "Considered child", game.GetStateRepresentation(Child.state), "UTC: inf",
+					print("Considered child", game.GetStateRepresentation(Child.state), "UTC: inf")
 				return Child
 
 		MaxWeight = 0.0
@@ -80,7 +85,7 @@ class MCTS:
 			#Weight = self.EvalUTC(Child)
 			Weight = Child.sputc
 			if(self.verbose):
-				print "Considered child:", game.GetStateRepresentation(Child.state), "UTC:", Weight
+				print("Considered child:", game.GetStateRepresentation(Child.state), "UTC:", Weight)
 			if(Weight > MaxWeight):
 				MaxWeight = Weight
 				SelectedChild = Child
@@ -92,7 +97,7 @@ class MCTS:
 	#-----------------------------------------------------------------------#
 	def Expansion(self, Leaf):
 		if(self.IsTerminal((Leaf))):
-			print "Is Terminal."
+			print("Is Terminal.")
 			return False
 		elif(Leaf.visits == 0):
 			return Leaf
@@ -108,7 +113,7 @@ class MCTS:
 			Child = self.SelectChildNode(Leaf)
 
 		if(self.verbose):
-			print "Expanded: ", game.GetStateRepresentation(Child.state)
+			print("Expanded: ", game.GetStateRepresentation(Child.state))
 		return Child
 
 	#-----------------------------------------------------------------------#
@@ -129,12 +134,12 @@ class MCTS:
 	#	and returns the possible children Nodes.
 	# Node	- Node from which to evaluate children.
 	#-----------------------------------------------------------------------#
- 	def EvalChildren(self, Node):
- 		NextStates = game.EvalNextStates(Node.state)
- 		Children = []
- 		for State in NextStates:
- 			ChildNode = nd.Node(State)
- 			Children.append(ChildNode)
+	def EvalChildren(self, Node):
+		NextStates = game.EvalNextStates(Node.state)
+		Children = []
+		for State in NextStates:
+			ChildNode = nd.Node(State)
+			Children.append(ChildNode)
 
 		return Children
 
@@ -160,7 +165,7 @@ class MCTS:
 		#if(any(CurrentState) == False):
 		#	return None
 		if(self.verbose):
-			print "Begin Simulation"
+			print("Begin Simulation")
 
 		Level = self.GetLevel(Node)
 		# Perform simulation.
@@ -168,7 +173,7 @@ class MCTS:
 			CurrentState = game.GetNextState(CurrentState)
 			Level += 1.0
 			if(self.verbose):
-				print "CurrentState:", game.GetStateRepresentation(CurrentState)
+				print("CurrentState:", game.GetStateRepresentation(CurrentState))
 				game.PrintTablesScores(CurrentState)
 
 		Result = game.GetResult(CurrentState)
@@ -182,7 +187,7 @@ class MCTS:
 	#-----------------------------------------------------------------------#
 	def Backpropagation(self, Node, Result):
 		# Update Node's weight.
- 		CurrentNode = Node
+		CurrentNode = Node
 		CurrentNode.wins += Result
 		CurrentNode.ressq += Result**2
 		CurrentNode.visits += 1
@@ -220,7 +225,7 @@ class MCTS:
 	def EvalUTC(self, Node):
 		#c = np.sqrt(2)
 		c = 0.5
-		w = Node.wins
+		w = Node.wins											# what is wins?
 		n = Node.visits
 		sumsq = Node.ressq
 		if(Node.parent == None):
@@ -230,7 +235,7 @@ class MCTS:
 
 		UTC = w/n + c * np.sqrt(np.log(t)/n)
 		D = 10000.
-		Modification = np.sqrt((sumsq - n * (w/n)**2 + D)/n)
+		Modification = np.sqrt((sumsq - n * (w/n)**2 + D)/n)	# X = w/n
 		#print "Original", UTC
 		#print "Mod", Modification
 		Node.sputc = UTC + Modification
@@ -303,20 +308,20 @@ class MCTS:
 	def Run(self, MaxIter = 5000):
 		for i in range(MaxIter):
 			if(self.verbose):
-				print "\n===== Begin iteration:", i, "====="
+				print("\n===== Begin iteration:", i, "=====")
 			X = self.Selection()
 			Y = self.Expansion(X)
 			if(Y):
 				Result = self.Simulation(Y)
 				if(self.verbose):
-					print "Result: ", Result
+					print("Result: ", Result)
 				self.Backpropagation(Y, Result)
 			else:
 				Result = game.GetResult(X.state)
 				if(self.verbose):
-					print "Result: ", Result
+					print("Result: ", Result)
 				self.Backpropagation(X, Result)
 			self.PrintResult(Result)
 
-		print "Search complete."
-		print "Iterations:", i
+		print("Search complete.")
+		print("Iterations:", i)
