@@ -3,12 +3,12 @@ import itertools as iter
 import copy
 
 # States are given as:
-# bins = np.array([v1, v2,..., vn])
-# state = np.array([v1, v2, v3, ..., vk])
+# bins = np.array([v1, v2,..., vn])			# 父节点？ 是一个n元数组
+# state = np.array([v1, v2, v3, ..., vk])	# 子节点？
 MAX_VOLUME = 10.0
 
 class State:
-	def __init__(self, items, bins):
+	def __init__(self, items, bins):		# bins是什么意思？
 		self.items = items
 		self.bins = bins
 
@@ -76,5 +76,5 @@ def EvalNextStates(CurrentState):
 def GetResult(CurrentState):
 	#Opt = 511.0/MAX_VOLUME
 	Opt = 5.0
-	return 5000.0 * Opt/len(CurrentState.bins)		# what means bins? len
+	return 5000.0 * Opt/len(CurrentState.bins)		# what means bins? 返回的是一个数值
 	#return 1.0/len(CurrentState.bins)
