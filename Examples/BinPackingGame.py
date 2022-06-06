@@ -2,9 +2,11 @@ import numpy as np
 import itertools as iter
 import copy
 
+# Bin Packing 是装箱问题
 # States are given as:
 # bins = np.array([v1, v2,..., vn])			# 父节点？ 是一个n元数组
 # state = np.array([v1, v2, v3, ..., vk])	# 子节点？
+
 MAX_VOLUME = 10.0
 
 class State:
